@@ -1,2 +1,2 @@
 # boost-geometry-proposal
-A repository for Boost organization for Google Summer of Code 2018.
+This repository contains the programming competency test and GSoC proposal.
