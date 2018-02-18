@@ -8,8 +8,6 @@
 #ifndef GEOLIB_SRC_GEOPOINT_CPP
 #define GEOLIB_SRC_GEOPOINT_CPP
 
-#include <cmath>
-
 // In case it hasn't been included yet.
 #include "geopoint.hpp"
 
@@ -17,8 +15,8 @@ namespace geolib {
 
 GeoPoint::GeoPoint(const double latitude,
                    const double longitude) :
-    latitude(latitude * M_PI / 180),
-    longitude(longitude * M_PI / 180)
+    latitude(latitude),
+    longitude(longitude)
 { /* Nothing to do. */ }
 
 } // namespace giolib

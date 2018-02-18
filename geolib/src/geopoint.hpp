@@ -8,6 +8,8 @@
 #ifndef GEOLIB_SRC_GEOPOINT_HPP
 #define GEOLIB_SRC_GEOPOINT_HPP
 
+#include <cmath>
+
 namespace geolib {
 
 /**
@@ -27,12 +29,17 @@ class GeoPoint
   GeoPoint(const double latitude,
            const double longitude);
 
-  //! Get the latitude.
+  //! Get the latitude in Radians.
+  double LatitudeRad() const { return latitude * M_PI / 180; }
+  //! Get the longitude in Radians.
+  double LongitudeRad() const { return longitude * M_PI / 180; }
+
+  //! Get the latitude in Degrees.
   double Latitude() const { return latitude; }
   //! Modify the latitude.
   double& Latitude() { return latitude; }
 
-  //! Get the longitude.
+  //! Get the longitude in Degrees.
   double Longitude() const { return longitude; }
   //! Modify the longitude.
   double& Longitude() { return longitude; }

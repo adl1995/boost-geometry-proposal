@@ -26,12 +26,12 @@ GeoDistance::GeoDistance(const GeoPoint point1,
 double GeoDistance::HaversineDistance()
 {
   // Create a local copy for convenience.
-  double differenceLatitude = point2.Latitude() - point1.Latitude();
-  double differenceLongitude = point2.Longitude() - point1.Longitude();
+  double differenceLatitude = point2.LatitudeRad() - point1.LatitudeRad();
+  double differenceLongitude = point2.LongitudeRad() - point1.LongitudeRad();
 
   // Calculate the central angle, given in radians.
   double centralAngle = std::pow(std::sin(differenceLatitude / 2), 2) +
-      std::cos(point1.Latitude()) * std::cos(point2.Latitude()) *
+      std::cos(point1.LatitudeRad()) * std::cos(point2.LatitudeRad()) *
       std::pow(std::sin(differenceLongitude / 2), 2);
 
   double distance = E_RADIUS * (2 * std::atan2(
@@ -40,6 +40,6 @@ double GeoDistance::HaversineDistance()
   return distance;
 }
 
-} // namespace giolib
+} // namespace geolib
 
 #endif
