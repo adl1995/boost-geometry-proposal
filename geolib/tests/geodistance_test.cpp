@@ -26,9 +26,9 @@ BOOST_AUTO_TEST_CASE(HaverineTest)
 
   GeoDistance distance(point1, point2);
 
-  double haversineDistance = distance.HaversineDistance();
+  double d = distance.HaversineDistance();
 
-  BOOST_TEST(haversineDistance == 0.549, boost::test_tools::tolerance(1e-3));
+  BOOST_TEST(d == 0.549, boost::test_tools::tolerance(1e-3));
 }
 
 /**
@@ -42,9 +42,25 @@ BOOST_AUTO_TEST_CASE(SphericalLawOfCosinesTest)
 
   GeoDistance distance(point1, point2);
 
-  double haversineDistance = distance.SphericalLawOfCosines();
+  double d = distance.SphericalLawOfCosines();
 
-  BOOST_TEST(haversineDistance == 0.549, boost::test_tools::tolerance(1e-3));
+  BOOST_TEST(d == 0.549, boost::test_tools::tolerance(1e-3));
+}
+
+/**
+ * Test case for GeoDistance using
+ * Equirectangular approximation.
+ */
+BOOST_AUTO_TEST_CASE(EquirectangularApproximationTest)
+{
+  GeoPoint point1(38.898556, -77.037852);
+  GeoPoint point2(38.897147, -77.043934);
+
+  GeoDistance distance(point1, point2);
+
+  double d = distance.EquirectangularApproximation();
+
+  BOOST_TEST(d == 0.549, boost::test_tools::tolerance(1e-3));
 }
 
 BOOST_AUTO_TEST_SUITE_END();

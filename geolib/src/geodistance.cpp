@@ -55,6 +55,21 @@ double GeoDistance::SphericalLawOfCosines()
   return distance;
 }
 
+// Find the distance using Equirectangular approximation.
+double GeoDistance::EquirectangularApproximation()
+{
+  // Create a local copy for convenience.
+  double differenceLatitude = point2.LatitudeRad() - point1.LatitudeRad();
+  double additionLatitude = point1.LatitudeRad() + point2.LatitudeRad();
+  double differenceLongitude = point2.LongitudeRad() - point1.LongitudeRad();
+
+  double x = differenceLongitude * std::cos(additionLatitude / 2);
+  double y = differenceLatitude;
+  double distance = E_RADIUS_KM * std::sqrt(std::pow(x, 2) + std::pow(y, 2));
+
+  return distance;
+}
+
 } // namespace geolib
 
 #endif

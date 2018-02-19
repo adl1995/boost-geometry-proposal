@@ -66,6 +66,23 @@ class GeoDistance
    */
   double SphericalLawOfCosines();
 
+  /**
+   * For less accurate and quick results, Equirectangular
+   * approximation provides a good alternative. For small
+   * distances Pythagoras’ theorem is used on an
+   * Equi­rectangular projec­tion.
+   *
+   * \f[
+   * {\begin{aligned}x&=(\lambda -\lambda _{0})\cos \varphi _{1}
+   * \\y&=(\varphi -\varphi _{1})
+   * \\d&= R * \sqrt{x^{2} + y^{2}\end{aligned}}}
+   * \f]
+   *
+   * For more information, please refer to:
+   * https://en.wikipedia.org/wiki/Equirectangular_projection
+   */
+  double EquirectangularApproximation();
+
   //! Get the first point.
   GeoPoint Point1() const { return point1; }
   //! Modify the first point.
