@@ -13,8 +13,8 @@
 
 namespace geolib {
 
-GeoPoint::GeoPoint(const double latitude,
-                   const double longitude) :
+GeoPoint::GeoPoint(const double& latitude,
+                   const double& longitude) :
     latitude(latitude),
     longitude(longitude)
 { /* Nothing to do. */ }

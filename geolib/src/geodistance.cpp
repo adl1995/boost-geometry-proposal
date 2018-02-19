@@ -16,8 +16,8 @@
 
 namespace geolib {
 
-GeoDistance::GeoDistance(const GeoPoint point1,
-                   const GeoPoint point2) :
+GeoDistance::GeoDistance(const GeoPoint& point1,
+                   const GeoPoint& point2) :
     point1(point1),
     point2(point2)
 { /* Nothing to do. */ }

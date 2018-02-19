@@ -27,8 +27,8 @@ class GeoDistance
    * @param point2 GeoPoint object for the second position
    *     on the Earth's surface.
    */
-  GeoDistance(const GeoPoint point1,
-              const GeoPoint point2);
+  GeoDistance(const GeoPoint& point1,
+              const GeoPoint& point2);
 
   /**
    * Find the geographical distance using the Haversine formula,
@@ -76,8 +76,8 @@ class GeoDistance
    * {\begin{aligned}
    * x&=(\lambda -\lambda _{0})\cos \varphi _{1}\\
    * y&=(\varphi -\varphi _{1})\\
-   * d&= R * \sqrt{x^{2} + y^{2}
-   * \end{aligned}}}
+   * d&= R * \sqrt{x^{2} + y^{2}}
+   * \end{aligned}}
    * \f]
    *
    * For more information, please refer to:

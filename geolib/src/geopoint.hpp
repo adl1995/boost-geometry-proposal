@@ -26,8 +26,8 @@ class GeoPoint
    * @param longitude  Geographic coordinate that specifies the
    *     east-west position of a point on the Earth's surface.
    */
-  GeoPoint(const double latitude,
-           const double longitude);
+  GeoPoint(const double& latitude,
+           const double& longitude);
 
   //! Get the latitude in Radians.
   double LatitudeRad() const { return latitude * M_PI / 180; }
