@@ -83,6 +83,28 @@ class GeoDistance
    */
   double EquirectangularApproximation();
 
+  /**
+   * The FCC (Federal Communications Commission) prescribes the
+   * following formulae for distances not exceeding
+   * 475 kilometres (295 mi):
+   *
+   * \f[
+   * D={\sqrt  {(K_{1}\Delta \phi )^{2}+(K_{2}\Delta \lambda )^{2}}}
+   * \f]
+   *
+   * where \f${K1}\f$ and \f${K2}\f$ are given by:
+   *
+   * \f[
+   * {\begin{aligned}K_{1}&=111.13209-0.56605\cos(2\phi _{m})+0.00120
+   * \cos(4\phi _{m});\\K_{2}&=111.41513\cos(\phi _{m})-0.09455
+   * \cos(3\phi _{m})+0.00012\cos(5\phi _{m}).\end{aligned}}
+   * \f]
+   *
+   * For more information, please refer to:
+   * https://en.wikipedia.org/wiki/Geographical_distance#Ellipsoidal_Earth_projected_to_a_plane
+   */
+  double EllipsoidalApproximation();
+
   //! Get the first point.
   GeoPoint Point1() const { return point1; }
   //! Modify the first point.

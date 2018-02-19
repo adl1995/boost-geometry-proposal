@@ -65,7 +65,29 @@ double GeoDistance::EquirectangularApproximation()
 
   double x = differenceLongitude * std::cos(additionLatitude / 2);
   double y = differenceLatitude;
+
+  // Calculate the distance in kilometers.
   double distance = E_RADIUS_KM * std::sqrt(std::pow(x, 2) + std::pow(y, 2));
+
+  return distance;
+}
+
+// Find the distance using Ellipsoidal approximation.
+double GeoDistance::EllipsoidalApproximation()
+{
+  // Create a local copy for convenience.
+  double differenceLatitude = point2.LatitudeRad() - point1.LatitudeRad();
+  double additionLatitude = point1.LatitudeRad() + point2.LatitudeRad();
+  double differenceLongitude = point2.LongitudeRad() - point1.LongitudeRad();
+
+  double K1 = 111.13209 - 0.56605 * std::cos(2 * (additionLatitude / 2)) +
+      0.00120 * std::cos(4 * (additionLatitude / 2));
+  double K2 = 111.41513 * std::cos(additionLatitude / 2) - 0.09455 *
+      std::cos(3 * (additionLatitude / 2)) + 0.00012 *
+      std::cos(5 * (additionLatitude / 2));
+
+  double distance = std::sqrt(std::pow(K1 * differenceLatitude, 2) +
+      std::pow(K2 * differenceLongitude, 2));
 
   return distance;
 }
