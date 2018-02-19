@@ -92,6 +92,24 @@ double GeoDistance::EllipsoidalApproximation()
   return distance;
 }
 
+// Find the distance using theh tunnel distance formula.
+double GeoDistance::TunnelDistance()
+{
+  double x = std::cos(point2.LatitudeRad()) * std::cos(point2.LongitudeRad()) -
+      std::cos(point1.LatitudeRad()) * std::cos(point1.LongitudeRad());
+
+  double y = std::cos(point2.LatitudeRad()) * std::sin(point2.LongitudeRad()) -
+      std::cos(point1.LatitudeRad()) * std::sin(point1.LongitudeRad());
+
+  double z = std::sin(point2.LatitudeRad()) - std::sin(point1.LatitudeRad());
+
+  // Calculate the distance in kilometers.
+  double distance = E_RADIUS_KM * std::sqrt(std::pow(x, 2) + std::pow(y, 2) +
+      std::pow(z, 2));
+
+  return distance;
+}
+
 } // namespace geolib
 
 #endif

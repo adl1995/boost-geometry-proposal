@@ -79,4 +79,20 @@ BOOST_AUTO_TEST_CASE(EllipsoidalApproximationTest)
   BOOST_TEST(d == 0.549, boost::test_tools::tolerance(1e-3));
 }
 
+/**
+ * Test case for GeoDistance using
+ * tunnel distance.
+ */
+BOOST_AUTO_TEST_CASE(TunnelDistanceTest)
+{
+  GeoPoint point1(38.898556, -77.037852);
+  GeoPoint point2(38.897147, -77.043934);
+
+  GeoDistance distance(point1, point2);
+
+  double d = distance.TunnelDistance();
+
+  BOOST_TEST(d == 0.549, boost::test_tools::tolerance(1e-3));
+}
+
 BOOST_AUTO_TEST_SUITE_END();
