@@ -16,7 +16,8 @@ using namespace geolib;
 BOOST_AUTO_TEST_SUITE(GeoDistanceTest);
 
 /**
- * Simple test case for GeoDistance.
+ * Test case for GeoDistance using
+ * the Haversine formula.
  */
 BOOST_AUTO_TEST_CASE(HaverineTest)
 {
@@ -26,6 +27,22 @@ BOOST_AUTO_TEST_CASE(HaverineTest)
   GeoDistance distance(point1, point2);
 
   double haversineDistance = distance.HaversineDistance();
+
+  BOOST_TEST(haversineDistance == 0.549, boost::test_tools::tolerance(1e-3));
+}
+
+/**
+ * Test case for GeoDistance using
+ * Spherical Law of Cosines.
+ */
+BOOST_AUTO_TEST_CASE(SphericalLawOfCosinesTest)
+{
+  GeoPoint point1(38.898556, -77.037852);
+  GeoPoint point2(38.897147, -77.043934);
+
+  GeoDistance distance(point1, point2);
+
+  double haversineDistance = distance.SphericalLawOfCosines();
 
   BOOST_TEST(haversineDistance == 0.549, boost::test_tools::tolerance(1e-3));
 }
