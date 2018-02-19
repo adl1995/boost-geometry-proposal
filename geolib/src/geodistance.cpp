@@ -76,15 +76,15 @@ double GeoDistance::EquirectangularApproximation()
 double GeoDistance::EllipsoidalApproximation()
 {
   // Create a local copy for convenience.
-  double differenceLatitude = point2.LatitudeRad() - point1.LatitudeRad();
-  double additionLatitude = point1.LatitudeRad() + point2.LatitudeRad();
-  double differenceLongitude = point2.LongitudeRad() - point1.LongitudeRad();
+  double differenceLatitude = point2.LatitudeDeg() - point1.LatitudeDeg();
+  double additionLatitude = point1.LatitudeDeg() + point2.LatitudeDeg();
+  double differenceLongitude = point2.LongitudeDeg() - point1.LongitudeDeg();
 
-  double K1 = 111.13209 - 0.56605 * std::cos(2 * (additionLatitude / 2)) +
-      0.00120 * std::cos(4 * (additionLatitude / 2));
-  double K2 = 111.41513 * std::cos(additionLatitude / 2) - 0.09455 *
-      std::cos(3 * (additionLatitude / 2)) + 0.00012 *
-      std::cos(5 * (additionLatitude / 2));
+  double K1 = 111.13209 - 0.56605 * std::cos(2 * (additionLatitude)) +
+      0.00120 * std::cos(4 * (additionLatitude));
+  double K2 = 111.41513 * std::cos(additionLatitude) - 0.09455 *
+      std::cos(3 * (additionLatitude)) + 0.00012 *
+      std::cos(5 * (additionLatitude));
 
   double distance = std::sqrt(std::pow(K1 * differenceLatitude, 2) +
       std::pow(K2 * differenceLongitude, 2));

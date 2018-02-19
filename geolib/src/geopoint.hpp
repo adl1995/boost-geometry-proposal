@@ -37,10 +37,10 @@ class GeoPoint
   //! Get the latitude in Degrees.
   double LatitudeDeg() const { return latitude; }
   //! Modify the latitude.
-  double& LatitudeDeg() { return latitude; }
+  double& Latitude() { return latitude; }
 
   //! Get the longitude in Degrees.
-  double Longitude() const { return longitude; }
+  double LongitudeDeg() const { return longitude; }
   //! Modify the longitude.
   double& Longitude() { return longitude; }
 
