@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(HaverineTest)
 
   double d = distance.HaversineDistance();
 
-  BOOST_TEST(d == 0.549, boost::test_tools::tolerance(1e-3));
+  BOOST_TEST(d == 0.549328, boost::test_tools::tolerance(1e-3));
 }
 
 /**
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(SphericalLawOfCosinesTest)
 
   double d = distance.SphericalLawOfCosines();
 
-  BOOST_TEST(d == 0.549, boost::test_tools::tolerance(1e-3));
+  BOOST_TEST(d == 0.549328, boost::test_tools::tolerance(1e-3));
 }
 
 /**
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(EquirectangularApproximationTest)
 
   double d = distance.EquirectangularApproximation();
 
-  BOOST_TEST(d == 0.549, boost::test_tools::tolerance(1e-3));
+  BOOST_TEST(d == 0.549328, boost::test_tools::tolerance(1e-3));
 }
 
 /**
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(EllipsoidalApproximationTest)
 
   double d = distance.EllipsoidalApproximation();
 
-  BOOST_TEST(d == 0.549, boost::test_tools::tolerance(1e-3));
+  BOOST_TEST(d == 0.522851, boost::test_tools::tolerance(1e-3));
 }
 
 /**
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(TunnelDistanceTest)
 
   double d = distance.TunnelDistance();
 
-  BOOST_TEST(d == 0.549, boost::test_tools::tolerance(1e-3));
+  BOOST_TEST(d == 0.549328, boost::test_tools::tolerance(1e-3));
 }
 
 BOOST_AUTO_TEST_SUITE_END();
