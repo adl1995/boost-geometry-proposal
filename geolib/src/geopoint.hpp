@@ -35,9 +35,9 @@ class GeoPoint
   double LongitudeRad() const { return longitude * M_PI / 180; }
 
   //! Get the latitude in Degrees.
-  double Latitude() const { return latitude; }
+  double LatitudeDeg() const { return latitude; }
   //! Modify the latitude.
-  double& Latitude() { return latitude; }
+  double& LatitudeDeg() { return latitude; }
 
   //! Get the longitude in Degrees.
   double Longitude() const { return longitude; }
