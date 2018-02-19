@@ -8,3 +8,5 @@ add_executable(geloib_tests tests/geodistance_test.cpp)
 target_compile_options(geloib_tests PUBLIC -std=c++11 -lboost_serialization -larmadillo -lmlpack -DBOOST_TEST_DYN_LINK)
 
 add_custom_target(tests COMMAND ./bin/geloib_tests)
+
+add_custom_target(docs COMMAND doxygen ../Doxyfile)
