@@ -11,6 +11,7 @@ $ git clone https://github.com/adl1995/boost-geometry-proposal.git
 Then, `cd` into the cloned repository by:
 ```bash
 $ cd boost-geometry-proposal
+$ cd geolib
 ```
 To compile the library, first create a build directory:
 ```bash
