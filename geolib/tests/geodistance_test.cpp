@@ -8,7 +8,6 @@
 #define BOOST_TEST_MODULE GeoDistanceTest
 #include <boost/test/included/unit_test.hpp>
 
-#include "../src/geopoint.hpp"
 #include "../src/geodistance.hpp"
 
 using namespace geolib;

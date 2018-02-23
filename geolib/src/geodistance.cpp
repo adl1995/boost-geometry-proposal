@@ -16,6 +16,12 @@
 
 namespace geolib {
 
+GeoPoint::GeoPoint(const double& latitude,
+                   const double& longitude) :
+    latitude(latitude),
+    longitude(longitude)
+{ /* Nothing to do. */ }
+
 GeoDistance::GeoDistance(const GeoPoint& point1,
                    const GeoPoint& point2) :
     point1(point1),
