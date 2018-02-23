@@ -94,4 +94,21 @@ BOOST_AUTO_TEST_CASE(TunnelDistanceTest)
   BOOST_TEST(d == 0.549328, boost::test_tools::tolerance(1e-3));
 }
 
+/**
+ * Test case for GeoDistance using
+ * Vincentys formula.
+ */
+BOOST_AUTO_TEST_CASE(VincentysFormulaTest)
+{
+  GeoPoint point1(23.205402, 120.335066);
+  GeoPoint point2(23.202188, 120.339733);
+
+  GeoDistance distance(point1, point2);
+
+  // The distance is returned in meters.
+  double d = distance.VincentysFormula();
+
+  BOOST_TEST(d == 595.768367, boost::test_tools::tolerance(1e-3));
+}
+
 BOOST_AUTO_TEST_SUITE_END();
