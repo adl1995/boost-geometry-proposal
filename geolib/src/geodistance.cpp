@@ -8,7 +8,8 @@
 #ifndef GEOLIB_SRC_GEODISTANCE_CPP
 #define GEOLIB_SRC_GEODISTANCE_CPP
 
-#define E_RADIUS_KM	6373
+#define E_RADIUS_KM 6373
+#define E_RADIUS_M 6373000
 
 // In case it hasn't been included yet.
 #include "geodistance.hpp"

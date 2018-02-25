@@ -5,12 +5,15 @@
  *
  */
 
+#include <boost/geometry.hpp>
+#include "../src/geodistance.hpp"
+
 #define BOOST_TEST_MODULE GeoDistanceTest
 #include <boost/test/included/unit_test.hpp>
 
-#include "../src/geodistance.hpp"
 
 using namespace geolib;
+using namespace boost::geometry;
 
 BOOST_AUTO_TEST_SUITE(GeoDistanceTest);
 
@@ -107,6 +110,94 @@ BOOST_AUTO_TEST_CASE(VincentysFormulaTest)
 
   // The distance is returned in meters.
   double d = distance.VincentysFormula();
+
+  BOOST_TEST(d == 595.768367, boost::test_tools::tolerance(1e-3));
+}
+
+/**
+ * Test case for GeoDistance using Boost Geometry.
+ */
+BOOST_AUTO_TEST_CASE(BoostGeometryDefaultStrategyTest)
+{
+  typedef model::point
+      <double, 2, cs::spherical_equatorial
+      <degree>> spherical_point;
+
+  // Boost Geometry takes arguments in (latitude, longitude) form.
+  spherical_point point1(120.335066, 23.205402);
+  spherical_point point2(120.339733, 23.202188);
+
+  // The distance is returned in meters.
+  double d = distance(point1, point2) * E_RADIUS_M;
+
+  BOOST_TEST(d == 595.768367, boost::test_tools::tolerance(1e-3));
+}
+
+/**
+ * Test case for GeoDistance using Boost Geometry
+ * Thomas strategy.
+ */
+BOOST_AUTO_TEST_CASE(BoostGeometryThomasStrategyTest)
+{
+  typedef model::point
+      <double, 2, cs::spherical_equatorial
+      <degree>> spherical_point;
+
+  typedef srs::spheroid<double> stype;
+  typedef strategy::distance::thomas<stype> thomas_type;
+
+  // Boost Geometry takes arguments in (latitude, longitude) form.
+  spherical_point point1(120.335066, 23.205402);
+  spherical_point point2(120.339733, 23.202188);
+
+  // The distance is returned in meters.
+  double d = distance(point1, point2, thomas_type());
+
+  BOOST_TEST(d == 595.768367, boost::test_tools::tolerance(1e-3));
+}
+
+/**
+ * Test case for GeoDistance using Boost Geometry
+ * Vincenty strategy.
+ */
+BOOST_AUTO_TEST_CASE(BoostGeometryVincentyStrategyTest)
+{
+  typedef model::point
+      <double, 2, cs::spherical_equatorial
+      <degree>> spherical_point;
+
+  typedef srs::spheroid<double> stype;
+  typedef strategy::distance::vincenty<stype> vincenty_type;
+
+  // Boost Geometry takes arguments in (latitude, longitude) form.
+  spherical_point point1(120.335066, 23.205402);
+  spherical_point point2(120.339733, 23.202188);
+
+  // The distance is returned in meters.
+  double d = distance(point1, point2, vincenty_type());
+
+  BOOST_TEST(d == 595.768367, boost::test_tools::tolerance(1e-3));
+}
+
+/**
+ * Test case for GeoDistance using Boost Geometry
+ * Andoyer strategy.
+ */
+BOOST_AUTO_TEST_CASE(BoostGeometryAndoyerStrategyTest)
+{
+  typedef model::point
+      <double, 2, cs::spherical_equatorial
+      <degree>> spherical_point;
+
+  typedef  srs::spheroid<double> stype;
+  typedef  strategy::distance::andoyer<stype> andoyer_type;
+
+  // Boost Geometry takes arguments in (latitude, longitude) form.
+  spherical_point point1(120.335066, 23.205402);
+  spherical_point point2(120.339733, 23.202188);
+
+  // The distance is returned in meters.
+  double d = distance(point1, point2, andoyer_type());
 
   BOOST_TEST(d == 595.768367, boost::test_tools::tolerance(1e-3));
 }
