@@ -1,5 +1,6 @@
 /**
  * @file geodistance_test.cpp
+ * @author Adeel Ahmad
  *
  * Test file for GeoDistance.
  *
@@ -11,6 +12,8 @@
 #define BOOST_TEST_MODULE GeoDistanceTest
 #include <boost/test/included/unit_test.hpp>
 
+#define E_RADIUS_KM 6373
+#define E_RADIUS_M 6373000
 
 using namespace geolib;
 using namespace boost::geometry;
@@ -28,7 +31,8 @@ BOOST_AUTO_TEST_CASE(HaverineTest)
 
   GeoDistance distance(point1, point2);
 
-  double d = distance.HaversineDistance();
+  // Convert the distance to kilometers.
+  double d = E_RADIUS_KM * distance.HaversineDistance();
 
   BOOST_TEST(d == 0.549328, boost::test_tools::tolerance(1e-3));
 }
@@ -44,7 +48,8 @@ BOOST_AUTO_TEST_CASE(SphericalLawOfCosinesTest)
 
   GeoDistance distance(point1, point2);
 
-  double d = distance.SphericalLawOfCosines();
+  // Convert the distance to kilometers.
+  double d = E_RADIUS_KM * distance.SphericalLawOfCosines();
 
   BOOST_TEST(d == 0.549328, boost::test_tools::tolerance(1e-3));
 }
@@ -60,7 +65,8 @@ BOOST_AUTO_TEST_CASE(EquirectangularApproximationTest)
 
   GeoDistance distance(point1, point2);
 
-  double d = distance.EquirectangularApproximation();
+  // Convert the distance to kilometers.
+  double d = E_RADIUS_KM * distance.EquirectangularApproximation();
 
   BOOST_TEST(d == 0.549328, boost::test_tools::tolerance(1e-3));
 }
@@ -76,6 +82,7 @@ BOOST_AUTO_TEST_CASE(EllipsoidalApproximationTest)
 
   GeoDistance distance(point1, point2);
 
+  // Convert the distance to kilometers.
   double d = distance.EllipsoidalApproximation();
 
   BOOST_TEST(d == 0.522851, boost::test_tools::tolerance(1e-3));
@@ -92,7 +99,8 @@ BOOST_AUTO_TEST_CASE(TunnelDistanceTest)
 
   GeoDistance distance(point1, point2);
 
-  double d = distance.TunnelDistance();
+  // Convert the distance to kilometers.
+  double d = E_RADIUS_KM * distance.TunnelDistance();
 
   BOOST_TEST(d == 0.549328, boost::test_tools::tolerance(1e-3));
 }
@@ -128,7 +136,7 @@ BOOST_AUTO_TEST_CASE(BoostGeometryDefaultStrategyTest)
   spherical_point point2(120.339733, 23.202188);
 
   // The distance is returned in meters.
-  double d = distance(point1, point2) * E_RADIUS_M;
+  double d = E_RADIUS_M * distance(point1, point2);
 
   BOOST_TEST(d == 595.768367, boost::test_tools::tolerance(1e-3));
 }

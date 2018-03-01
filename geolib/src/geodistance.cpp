@@ -1,5 +1,6 @@
 /**
  * @file geodistance.cpp
+ * @author Adeel Ahmad
  *
  * A representation of a geographical point on the Earth's surface.
  * The coordinates are represented in latitude and longitude.
@@ -7,9 +8,6 @@
  */
 #ifndef GEOLIB_SRC_GEODISTANCE_CPP
 #define GEOLIB_SRC_GEODISTANCE_CPP
-
-#define E_RADIUS_KM 6373
-#define E_RADIUS_M 6373000
 
 // In case it hasn't been included yet.
 #include "geodistance.hpp"
@@ -41,8 +39,8 @@ double GeoDistance::HaversineDistance()
       std::cos(point1.LatitudeRad()) * std::cos(point2.LatitudeRad()) *
       std::pow(std::sin(differenceLongitude / 2), 2);
 
-  // Calculate the distance in kilometers.
-  double distance = E_RADIUS_KM * (2 * std::atan2(
+  // Calculate the distance.
+  double distance = (2 * std::atan2(
       std::sqrt(centralAngle), std::sqrt(1 - centralAngle)));
 
   return distance;
@@ -54,8 +52,8 @@ double GeoDistance::SphericalLawOfCosines()
   // Create a local copy for convenience.
   double differenceLongitude = point2.LongitudeRad() - point1.LongitudeRad();
 
-  // Calculate the distance in kilometers.
-  double distance = E_RADIUS_KM * std::acos(std::sin(point1.LatitudeRad()) *
+  // Calculate the distance.
+  double distance = std::acos(std::sin(point1.LatitudeRad()) *
     std::sin(point2.LatitudeRad()) + std::cos(point1.LatitudeRad()) *
     std::cos(point2.LatitudeRad()) * std::cos(differenceLongitude));
 
@@ -73,8 +71,8 @@ double GeoDistance::EquirectangularApproximation()
   double x = differenceLongitude * std::cos(additionLatitude / 2);
   double y = differenceLatitude;
 
-  // Calculate the distance in kilometers.
-  double distance = E_RADIUS_KM * std::sqrt(std::pow(x, 2) + std::pow(y, 2));
+  // Calculate the distance.
+  double distance = std::sqrt(std::pow(x, 2) + std::pow(y, 2));
 
   return distance;
 }
@@ -110,8 +108,8 @@ double GeoDistance::TunnelDistance()
 
   double z = std::sin(point2.LatitudeRad()) - std::sin(point1.LatitudeRad());
 
-  // Calculate the distance in kilometers.
-  double distance = E_RADIUS_KM * std::sqrt(std::pow(x, 2) + std::pow(y, 2) +
+  // Calculate the distance.
+  double distance = std::sqrt(std::pow(x, 2) + std::pow(y, 2) +
       std::pow(z, 2));
 
   return distance;

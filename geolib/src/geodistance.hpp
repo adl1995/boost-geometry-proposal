@@ -1,5 +1,6 @@
 /**
  * @file geodistance.hpp
+ * @author Adeel Ahmad
  *
  * Geographical distance between two points on the Earth's surface.
  * The current implementation includes the Haversine formula.
