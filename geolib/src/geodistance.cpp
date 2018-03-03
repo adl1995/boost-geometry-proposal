@@ -15,20 +15,27 @@
 
 namespace geolib {
 
-GeoPoint::GeoPoint(const double& latitude,
-                   const double& longitude) :
+template <typename CoordSystem>
+GeoPoint<CoordSystem>::GeoPoint()
+{ /* Nothing to do. */ }
+
+template <typename CoordSystem>
+GeoPoint<CoordSystem>::GeoPoint(const CoordSystem& latitude,
+                   const CoordSystem& longitude) :
     latitude(latitude),
     longitude(longitude)
 { /* Nothing to do. */ }
 
-GeoDistance::GeoDistance(const GeoPoint& point1,
-                   const GeoPoint& point2) :
+template <typename CoordSystem>
+GeoDistance<CoordSystem>::GeoDistance(const GeoPoint<CoordSystem>& point1,
+                         const GeoPoint<CoordSystem>& point2) :
     point1(point1),
     point2(point2)
 { /* Nothing to do. */ }
 
 // Find the distance using the Haversine formula.
-double GeoDistance::HaversineDistance()
+template <typename CoordSystem>
+double GeoDistance<CoordSystem>::HaversineDistance()
 {
   // Create a local copy for convenience.
   double differenceLatitude = point2.LatitudeRad() - point1.LatitudeRad();
@@ -47,7 +54,8 @@ double GeoDistance::HaversineDistance()
 }
 
 // Find the distance using Spherical Law of Cosines.
-double GeoDistance::SphericalLawOfCosines()
+template <typename CoordSystem>
+double GeoDistance<CoordSystem>::SphericalLawOfCosines()
 {
   // Create a local copy for convenience.
   double differenceLongitude = point2.LongitudeRad() - point1.LongitudeRad();
@@ -61,7 +69,8 @@ double GeoDistance::SphericalLawOfCosines()
 }
 
 // Find the distance using Equirectangular approximation.
-double GeoDistance::EquirectangularApproximation()
+template <typename CoordSystem>
+double GeoDistance<CoordSystem>::EquirectangularApproximation()
 {
   // Create a local copy for convenience.
   double differenceLatitude = point2.LatitudeRad() - point1.LatitudeRad();
@@ -78,7 +87,8 @@ double GeoDistance::EquirectangularApproximation()
 }
 
 // Find the distance using Ellipsoidal approximation.
-double GeoDistance::EllipsoidalApproximation()
+template <typename CoordSystem>
+double GeoDistance<CoordSystem>::EllipsoidalApproximation()
 {
   // Create a local copy for convenience.
   double differenceLatitude = point2.LatitudeDeg() - point1.LatitudeDeg();
@@ -98,7 +108,8 @@ double GeoDistance::EllipsoidalApproximation()
 }
 
 // Find the distance using tunnel distance formula.
-double GeoDistance::TunnelDistance()
+template <typename CoordSystem>
+double GeoDistance<CoordSystem>::TunnelDistance()
 {
   double x = std::cos(point2.LatitudeRad()) * std::cos(point2.LongitudeRad()) -
       std::cos(point1.LatitudeRad()) * std::cos(point1.LongitudeRad());
@@ -116,7 +127,8 @@ double GeoDistance::TunnelDistance()
 }
 
 // Find the distance using Vincentys formula.
-double GeoDistance::VincentysFormula()
+template <typename CoordSystem>
+double GeoDistance<CoordSystem>::VincentysFormula()
 {
   // Length of semi-major axis of the ellipsoid (radius at equator).
   double a = 6378137.0; // @todo: Define a macro
