@@ -12,7 +12,8 @@
 namespace geolib {
 
 /**
- * This class represents a geographical point on the Earth's surface.
+ * This class represents a 2-dimensional geographic / spherical point
+ * on the Earth's surface using degrees as units.
  */
 template <typename CoordType>
 class GeoPoint
@@ -60,7 +61,7 @@ class GeoPoint
  * two points on the Earth's surface.
  */
 template <typename CoordType>
-class GeoDistance : public GeoPoint<CoordType>
+class GeoDistance
 {
  public:
   /**
