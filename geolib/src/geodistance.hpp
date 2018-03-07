@@ -14,7 +14,7 @@ namespace geolib {
 /**
  * This class represents a geographical point on the Earth's surface.
  */
-template <typename CoordSystem>
+template <typename CoordType>
 class GeoPoint
 {
  public:
@@ -27,40 +27,40 @@ class GeoPoint
    *     east-west position of a point on the Earth's surface.
    */
   GeoPoint();
-  GeoPoint(const CoordSystem& latitude,
-           const CoordSystem& longitude);
+  GeoPoint(const CoordType& latitude,
+           const CoordType& longitude);
 
   //! Get the latitude in radians.
-  CoordSystem LatitudeRad() const { return latitude * M_PI / 180; }
+  CoordType LatitudeRad() const { return latitude * M_PI / 180; }
   //! Get the longitude in radians.
-  CoordSystem LongitudeRad() const { return longitude * M_PI / 180; }
+  CoordType LongitudeRad() const { return longitude * M_PI / 180; }
 
   //! Get the latitude in degrees.
-  CoordSystem LatitudeDeg() const { return latitude; }
+  CoordType LatitudeDeg() const { return latitude; }
   //! Modify the latitude.
-  CoordSystem& Latitude() { return latitude; }
+  CoordType& Latitude() { return latitude; }
 
   //! Get the longitude in degrees.
-  CoordSystem LongitudeDeg() const { return longitude; }
+  CoordType LongitudeDeg() const { return longitude; }
   //! Modify the longitude.
-  CoordSystem& Longitude() { return longitude; }
+  CoordType& Longitude() { return longitude; }
 
  private:
   //! Geographic coordinate that specifies the north-south
   //! position of a point on the Earth's surface.
-  CoordSystem latitude;
+  CoordType latitude;
 
   //! Geographic coordinate that specifies the east-west
   //! position of a point on the Earth's surface.
-  CoordSystem longitude;
+  CoordType longitude;
 };
 
 /**
  * This class calculates the geographical distance between
  * two points on the Earth's surface.
  */
-template <typename CoordSystem>
-class GeoDistance : public GeoPoint<CoordSystem>
+template <typename CoordType>
+class GeoDistance : public GeoPoint<CoordType>
 {
  public:
   /**
@@ -71,8 +71,8 @@ class GeoDistance : public GeoPoint<CoordSystem>
    * @param point2 GeoPoint object for the second position
    *     on the Earth's surface.
    */
-  GeoDistance(const GeoPoint<CoordSystem>& point1,
-              const GeoPoint<CoordSystem>& point2);
+  GeoDistance(const GeoPoint<CoordType>& point1,
+              const GeoPoint<CoordType>& point2);
 
   /**
    * Find the geographical distance using the Haversine formula,
@@ -200,21 +200,21 @@ class GeoDistance : public GeoPoint<CoordSystem>
   double VincentysFormula();
 
   //! Get the first point.
-  GeoPoint<CoordSystem> Point1() const { return point1; }
+  GeoPoint<CoordType> Point1() const { return point1; }
   //! Modify the first point.
-  GeoPoint<CoordSystem>& Point1() { return point1; }
+  GeoPoint<CoordType>& Point1() { return point1; }
 
   //! Get the second point.
-  GeoPoint<CoordSystem> Point2() const { return point2; }
+  GeoPoint<CoordType> Point2() const { return point2; }
   //! Modify the second point.
-  GeoPoint<CoordSystem>& Point2() { return point2; }
+  GeoPoint<CoordType>& Point2() { return point2; }
 
  private:
   //! GeoPoint object for the first position on the Earth's surface.
-  GeoPoint<CoordSystem> point1;
+  GeoPoint<CoordType> point1;
 
   //! GeoPoint object for the second position on the Earth's surface.
-  GeoPoint<CoordSystem> point2;
+  GeoPoint<CoordType> point2;
 };
 
 } // namespace geolib
