@@ -1,5 +1,6 @@
 /**
  * @file geodistance.hpp
+ * @author Adeel Ahmad
  *
  * Geographical distance between two points on the Earth's surface.
  * The current implementation includes the Haversine formula.
@@ -8,14 +9,58 @@
 #ifndef GEOLIB_SRC_GEODISTANCE_HPP
 #define GEOLIB_SRC_GEODISTANCE_HPP
 
-#include "geopoint.hpp"
-
 namespace geolib {
+
+/**
+ * This class represents a 2-dimensional geographic / spherical point
+ * on the Earth's surface using degrees as units.
+ */
+template <typename CoordType>
+class GeoPoint
+{
+ public:
+  /**
+   * Construct the GeoPoint object with the given parameters.
+   *
+   * @param latitude  Geographic coordinate that specifies the
+   *     north-south position of a point on the Earth's surface.
+   * @param longitude  Geographic coordinate that specifies the
+   *     east-west position of a point on the Earth's surface.
+   */
+  GeoPoint();
+  GeoPoint(const CoordType& latitude,
+           const CoordType& longitude);
+
+  //! Get the latitude in radians.
+  CoordType LatitudeRad() const { return latitude * M_PI / 180; }
+  //! Get the longitude in radians.
+  CoordType LongitudeRad() const { return longitude * M_PI / 180; }
+
+  //! Get the latitude in degrees.
+  CoordType LatitudeDeg() const { return latitude; }
+  //! Modify the latitude.
+  CoordType& Latitude() { return latitude; }
+
+  //! Get the longitude in degrees.
+  CoordType LongitudeDeg() const { return longitude; }
+  //! Modify the longitude.
+  CoordType& Longitude() { return longitude; }
+
+ private:
+  //! Geographic coordinate that specifies the north-south
+  //! position of a point on the Earth's surface.
+  CoordType latitude;
+
+  //! Geographic coordinate that specifies the east-west
+  //! position of a point on the Earth's surface.
+  CoordType longitude;
+};
 
 /**
  * This class calculates the geographical distance between
  * two points on the Earth's surface.
  */
+template <typename CoordType>
 class GeoDistance
 {
  public:
@@ -27,8 +72,8 @@ class GeoDistance
    * @param point2 GeoPoint object for the second position
    *     on the Earth's surface.
    */
-  GeoDistance(const GeoPoint& point1,
-              const GeoPoint& point2);
+  GeoDistance(const GeoPoint<CoordType>& point1,
+              const GeoPoint<CoordType>& point2);
 
   /**
    * Find the geographical distance using the Haversine formula,
@@ -49,7 +94,7 @@ class GeoDistance
    *
    * For more information, please refer to:
    * https://en.wikipedia.org/wiki/Haversine_formula
-   */ 
+   */
   double HaversineDistance();
 
   /**
@@ -128,22 +173,49 @@ class GeoDistance
    */
   double TunnelDistance();
 
+  /**
+   * Vincenty's formulae are two related iterative methods used to calculate
+   * the distance between two points on the surface of a spheroid. They
+   * assume an oblate spheroid model of the Earth, and hence are more
+   * accurate than methods that assume a spherical Earth, such as
+   * the great-circle distance.
+   *
+   * The inverse problem is given by:
+   *
+   * \f[
+   * {\begin{aligned}
+   * &\sin \sigma ={\sqrt  {(\cos U_{2}\sin \lambda )^{2}+(\cos U_{1}\sin U_{2}-\sin U_{1}\cos U_{2}\cos \lambda )^{2}}}\\
+   * &\cos \sigma =\sin U_{1}\sin U_{2}+\cos U_{1}\cos U_{2}\cos \lambda\\
+   * &\sigma =\arctan {\frac  {\sin \sigma }{\cos \sigma }}\\
+   * &\sin \alpha ={\frac  {\cos U_{1}\cos U_{2}\sin \lambda }{\sin \sigma }}\\
+   * &\cos ^{2}\alpha =1-\sin ^{2}\alpha\\
+   * &\cos(2\sigma _{m})=\cos \sigma -{\frac  {2\sin U_{1}\sin U_{2}}{\cos ^{2}\alpha }}\\
+   * &C={\frac  {f}{16}}\cos ^{2}\alpha {\big [}4+f(4-3\cos ^{2}\alpha ){\big ]}\\
+   * &\lambda =L+(1-C)f\sin \alpha \left\{\sigma +C\sin \sigma \left[\cos(2\sigma _{m})+C\cos \sigma (-1+2\cos ^{2}(2\sigma _{m}))\right]\right\}\\
+   * \end{aligned}}\\
+   * \f]
+   *
+   * For more information, please refer to:
+   * https://en.wikipedia.org/wiki/Vincenty's_formulae
+   */
+  double VincentysFormula();
+
   //! Get the first point.
-  GeoPoint Point1() const { return point1; }
+  GeoPoint<CoordType> Point1() const { return point1; }
   //! Modify the first point.
-  GeoPoint& Point1() { return point1; }
+  GeoPoint<CoordType>& Point1() { return point1; }
 
   //! Get the second point.
-  GeoPoint Point2() const { return point2; }
+  GeoPoint<CoordType> Point2() const { return point2; }
   //! Modify the second point.
-  GeoPoint& Point2() { return point2; }
+  GeoPoint<CoordType>& Point2() { return point2; }
 
  private:
   //! GeoPoint object for the first position on the Earth's surface.
-  GeoPoint point1;
+  GeoPoint<CoordType> point1;
 
   //! GeoPoint object for the second position on the Earth's surface.
-  GeoPoint point2;
+  GeoPoint<CoordType> point2;
 };
 
 } // namespace geolib

@@ -1,19 +1,68 @@
 /**
  * @file geodistance_test.cpp
+ * @author Adeel Ahmad
  *
  * Test file for GeoDistance.
  *
  */
 
+#define E_RADIUS_KM 6373
+#define E_RADIUS_M 6373000
 #define BOOST_TEST_MODULE GeoDistanceTest
-#include <boost/test/included/unit_test.hpp>
 
-#include "../src/geopoint.hpp"
+#include <fstream>
+#include <boost/geometry.hpp>
 #include "../src/geodistance.hpp"
 
-using namespace geolib;
+#include <boost/test/included/unit_test.hpp>
 
-BOOST_AUTO_TEST_SUITE(GeoDistanceTest);
+using namespace geolib;
+using namespace boost::geometry;
+using namespace boost::test_tools;
+
+struct InitTests
+{
+  // Read the test data in a std::vector.
+  InitTests() :
+      infile("GeodTest.dat")
+  {
+    // This will temporarily hold the data values.
+    double dataField;
+
+    while (std::getline(infile, line))
+    {
+      std::istringstream iss(line);
+
+      // Push the space separated values in a vector.
+      std::vector<double> geoData;
+      while (iss >> dataField) { geoData.push_back(dataField); }
+
+      GeoPoint<double> point1(geoData[0], geoData[1]),
+               point2(geoData[3], geoData[4]);
+
+      GeoDistance<double> distanceLocal(point1, point2);
+
+      distanceGlobalTest.push_back(
+          std::make_pair(distanceLocal, geoData[6]));
+    }
+  }
+
+  // Objects for file reading.
+  std::string line;
+  std::ifstream infile;
+
+  // The pair will hold the GeoDistance object and
+  // the resulting distance.
+  std::vector<std::pair<GeoDistance<double>, double>> distanceGlobalTest;
+
+  // These object are required for Boot Geometry tests.
+  typedef model::point
+      <double, 2, cs::spherical_equatorial
+      <degree>> spherical_point;
+  typedef srs::spheroid<double> stype;
+};
+
+BOOST_FIXTURE_TEST_SUITE(GeoDistanceTest, InitTests);
 
 /**
  * Test case for GeoDistance using
@@ -21,14 +70,13 @@ BOOST_AUTO_TEST_SUITE(GeoDistanceTest);
  */
 BOOST_AUTO_TEST_CASE(HaverineTest)
 {
-  GeoPoint point1(38.898556, -77.037852);
-  GeoPoint point2(38.897147, -77.043934);
+  for (size_t i = 0; i < distanceGlobalTest.size(); ++i)
+  {
+    // Convert the distance to meters.
+    double d = E_RADIUS_M * distanceGlobalTest[i].first.HaversineDistance();
 
-  GeoDistance distance(point1, point2);
-
-  double d = distance.HaversineDistance();
-
-  BOOST_TEST(d == 0.549328, boost::test_tools::tolerance(1e-3));
+    BOOST_TEST(d == distanceGlobalTest[i].second, tolerance(1e-1));
+  }
 }
 
 /**
@@ -37,14 +85,13 @@ BOOST_AUTO_TEST_CASE(HaverineTest)
  */
 BOOST_AUTO_TEST_CASE(SphericalLawOfCosinesTest)
 {
-  GeoPoint point1(38.898556, -77.037852);
-  GeoPoint point2(38.897147, -77.043934);
+  for (size_t i = 0; i < distanceGlobalTest.size(); ++i)
+  {
+    // Convert the distance to meters.
+    double d = E_RADIUS_M * distanceGlobalTest[i].first.SphericalLawOfCosines();
 
-  GeoDistance distance(point1, point2);
-
-  double d = distance.SphericalLawOfCosines();
-
-  BOOST_TEST(d == 0.549328, boost::test_tools::tolerance(1e-3));
+    BOOST_TEST(d == distanceGlobalTest[i].second, tolerance(1e-1));
+  }
 }
 
 /**
@@ -53,14 +100,13 @@ BOOST_AUTO_TEST_CASE(SphericalLawOfCosinesTest)
  */
 BOOST_AUTO_TEST_CASE(EquirectangularApproximationTest)
 {
-  GeoPoint point1(38.898556, -77.037852);
-  GeoPoint point2(38.897147, -77.043934);
+  for (size_t i = 0; i < distanceGlobalTest.size(); ++i)
+  {
+    // Convert the distance to meters.
+    double d = E_RADIUS_M * distanceGlobalTest[i].first.EquirectangularApproximation();
 
-  GeoDistance distance(point1, point2);
-
-  double d = distance.EquirectangularApproximation();
-
-  BOOST_TEST(d == 0.549328, boost::test_tools::tolerance(1e-3));
+    BOOST_TEST(d == distanceGlobalTest[i].second, tolerance(0.55));
+  }
 }
 
 /**
@@ -69,14 +115,13 @@ BOOST_AUTO_TEST_CASE(EquirectangularApproximationTest)
  */
 BOOST_AUTO_TEST_CASE(EllipsoidalApproximationTest)
 {
-  GeoPoint point1(38.898556, -77.037852);
-  GeoPoint point2(38.897147, -77.043934);
+  for (size_t i = 0; i < distanceGlobalTest.size(); ++i)
+  {
+    // Convert the distance to meters.
+    double d = distanceGlobalTest[i].first.EllipsoidalApproximation() * 1000;
 
-  GeoDistance distance(point1, point2);
-
-  double d = distance.EllipsoidalApproximation();
-
-  BOOST_TEST(d == 0.522851, boost::test_tools::tolerance(1e-3));
+    BOOST_TEST(d == distanceGlobalTest[i].second, tolerance(7.8));
+  }
 }
 
 /**
@@ -85,14 +130,164 @@ BOOST_AUTO_TEST_CASE(EllipsoidalApproximationTest)
  */
 BOOST_AUTO_TEST_CASE(TunnelDistanceTest)
 {
-  GeoPoint point1(38.898556, -77.037852);
-  GeoPoint point2(38.897147, -77.043934);
+  for (size_t i = 0; i < distanceGlobalTest.size(); ++i)
+  {
+    // Convert the distance to meters.
+    double d = E_RADIUS_M * distanceGlobalTest[i].first.TunnelDistance();
 
-  GeoDistance distance(point1, point2);
+    BOOST_TEST(d == distanceGlobalTest[i].second, tolerance(0.5));
+  }
+}
 
-  double d = distance.TunnelDistance();
+/**
+ * Test case for GeoDistance using
+ * Vincentys formula.
+ */
+BOOST_AUTO_TEST_CASE(VincentysFormulaTest)
+{
+  for (size_t i = 0; i < distanceGlobalTest.size(); ++i)
+  {
+    // The distance is retuned in meters.
+    double d = distanceGlobalTest[i].first.VincentysFormula();
 
-  BOOST_TEST(d == 0.549328, boost::test_tools::tolerance(1e-3));
+    BOOST_TEST(d == distanceGlobalTest[i].second, tolerance(1e-9));
+  }
+}
+
+/**
+ * Test case for GeoDistance using Boost Geometry.
+ */
+BOOST_AUTO_TEST_CASE(BoostGeometryDefaultStrategyTest)
+{
+  // This will temporarily hold the data values.
+  double dataField;
+
+  // Reset the file buffer.
+  infile.clear();
+  infile.seekg(0, infile.beg);
+
+  while (std::getline(infile, line))
+  {
+    std::istringstream iss(line);
+
+    // Push the space separated values in a vector.
+    std::vector<double> geoData;
+    while (iss >> dataField) { geoData.push_back(dataField); }
+
+    // Boost Geometry takes arguments in (latitude, longitude) form.
+    spherical_point point1(geoData[1], geoData[0]),
+                    point2(geoData[4], geoData[3]);
+
+    // Convert the distance to meters.
+    double d = E_RADIUS_M * distance(point1, point2);
+
+    BOOST_TEST(d == geoData[6], tolerance(1e-2));
+  }
+}
+
+/**
+ * Test case for GeoDistance using Boost Geometry
+ * Thomas strategy.
+ */
+BOOST_AUTO_TEST_CASE(BoostGeometryThomasStrategyTest)
+{
+  // Define the strategy.
+  typedef strategy::distance::thomas<stype> thomas_type;
+
+  // This will temporarily hold the data values.
+  double dataField;
+
+  // Reset the file buffer.
+  infile.clear();
+  infile.seekg(0, infile.beg);
+
+  while (std::getline(infile, line))
+  {
+    std::istringstream iss(line);
+
+    // Push the space separated values in a vector.
+    std::vector<double> geoData;
+    while (iss >> dataField) { geoData.push_back(dataField); }
+
+    // Boost Geometry takes arguments in (latitude, longitude) form.
+    spherical_point point1(geoData[1], geoData[0]),
+                    point2(geoData[4], geoData[3]);
+
+    // The distance is returned in meters.
+    double d = distance(point1, point2, thomas_type());
+
+    BOOST_TEST(d == geoData[6], tolerance(1e-4));
+  }
+}
+
+/**
+ * Test case for GeoDistance using Boost Geometry
+ * Vincenty strategy.
+ */
+BOOST_AUTO_TEST_CASE(BoostGeometryVincentyStrategyTest)
+{
+  // Define the strategy.
+  typedef strategy::distance::vincenty<stype> vincenty_type;
+
+  // This will temporarily hold the data values.
+  double dataField;
+
+  // Reset the file buffer.
+  infile.clear();
+  infile.seekg(0, infile.beg);
+
+  while (std::getline(infile, line))
+  {
+    std::istringstream iss(line);
+
+    // Push the space separated values in a vector.
+    std::vector<double> geoData;
+    while (iss >> dataField) { geoData.push_back(dataField); }
+
+    // Boost Geometry takes arguments in (latitude, longitude) form.
+    spherical_point point1(geoData[1], geoData[0]),
+                    point2(geoData[4], geoData[3]);
+
+    // The distance is returned in meters.
+    double d = distance(point1, point2, vincenty_type());
+
+    BOOST_TEST(d == geoData[6], tolerance(1e-5));
+  }
+}
+
+/**
+ * Test case for GeoDistance using Boost Geometry
+ * Andoyer strategy.
+ */
+BOOST_AUTO_TEST_CASE(BoostGeometryAndoyerStrategyTest)
+{
+  // Define the strategy.
+  typedef strategy::distance::andoyer<stype> andoyer_type;
+
+  // This will temporarily hold the data values.
+  double dataField;
+
+  // Reset the file buffer.
+  infile.clear();
+  infile.seekg(0, infile.beg);
+
+  while (std::getline(infile, line))
+  {
+    std::istringstream iss(line);
+
+    // Push the space separated values in a vector.
+    std::vector<double> geoData;
+    while (iss >> dataField) { geoData.push_back(dataField); }
+
+    // Boost Geometry takes arguments in (latitude, longitude) form.
+    spherical_point point1(geoData[1], geoData[0]),
+                    point2(geoData[4], geoData[3]);
+
+    // The distance is returned in meters.
+    double d = distance(point1, point2, andoyer_type());
+
+    BOOST_TEST(d == geoData[6], tolerance(1e-4));
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
