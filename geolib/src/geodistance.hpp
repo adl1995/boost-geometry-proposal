@@ -9,8 +9,31 @@
 #ifndef GEOLIB_SRC_GEODISTANCE_HPP
 #define GEOLIB_SRC_GEODISTANCE_HPP
 
-namespace geolib {
+// Define a traits system which extends a generic getRadian
+// function to be used for accessing its elements using
+// the access struction.
+namespace PointTrait
+{
+    template <typename P, int D>
+    struct access {};
+}
 
+// These free functions enables us to call getRadian<0>(point),
+// where 0 represents latitude. This works for any point
+// having the PointTrait::access specialization.
+template <int D, typename P>
+inline double getRadian(P const& p)
+{
+    return PointTrait::access<P, D>::getRadian(p);
+}
+
+template <int D, typename P>
+inline double getDegree(P const& p)
+{
+    return PointTrait::access<P, D>::getDegree(p);
+}
+
+namespace geolib {
 /**
  * This class represents a 2-dimensional geographic / spherical point
  * on the Earth's surface using degrees as units.

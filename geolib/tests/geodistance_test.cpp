@@ -20,6 +20,43 @@ using namespace geolib;
 using namespace boost::geometry;
 using namespace boost::test_tools;
 
+
+// Define a custom point representation; to
+// be used for distance computation.
+struct GeoPointUser
+{
+  GeoPointUser(double latitude, double longitude) :
+    latitude(latitude), longitude(longitude)
+    { /* Nothing to do. */ }
+
+  double latitude, longitude;
+};
+
+// Specialize the generic functions getRadian and getDegree
+// for our GeoPointUser type. These functions are used for
+// distance computation.
+namespace PointTrait
+{
+    template <>
+    struct access<GeoPointUser, 0>
+    {
+        static double getRadian(GeoPointUser const& p)
+        { return p.latitude * M_PI / 180; }
+
+        static double getDegree(GeoPointUser const& p)
+        { return p.latitude; }
+    };
+    template <>
+    struct access<GeoPointUser, 1>
+    {
+        static double getRadian(GeoPointUser const& p)
+        { return p.longitude * M_PI / 180; }
+
+        static double getDegree(GeoPointUser const& p)
+        { return p.longitude; }
+    };
+}
+
 struct InitTests
 {
   // Read the test data in a std::vector.
