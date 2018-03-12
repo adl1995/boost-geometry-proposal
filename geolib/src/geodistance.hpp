@@ -37,6 +37,96 @@ namespace geolib {
 
 using namespace PointTrait;
 
+/*! \mainpage The GeoLib header-only library
+ *
+ * \section intro_sec Introduction
+ *
+ * This library provides functions for calculating the geographical
+ * distance between two points on the Earth's surface.
+ *
+ * The user has the ability to define their custom point type to be
+ * used for distance computation. We employ traits for accessing
+ * structure elements. Therefore, these have to be specialized
+ * by the library user. An example structure is shown below:
+ *
+ * ```cpp
+ * struct CustomPoint
+ * {
+ *   CustomPoint(double latitude, double longitude) :
+ *     latitude(latitude),
+ *     longitude(longitude) {}
+ *   double latitude, longitude;
+ *  };
+ *  ```
+ *  This then has to be specialized with the generic functions
+ *  `getRadian` and `getDegree`. We have to implement these in
+ *  the `PointTrait` namespace. An example specialization is
+ *  provided below:
+ *
+ * ```cpp
+ * namespace PointTrait
+ * {
+ *     template <>
+ *     struct AccessPoint<CustomPoint, 0>
+ *     {
+ *         static double getRadian(CustomPoint const& p)
+ *         { return p.latitude * M_PI / 180; }
+ *
+ *         static double getDegree(CustomPoint const& p)
+ *         { return p.latitude; }
+ *     };
+ *     template <>
+ *     struct AccessPoint<CustomPoint, 1>
+ *     {
+ *         static double getRadian(CustomPoint const& p)
+ *         { return p.longitude * M_PI / 180; }
+ *
+ *         static double getDegree(CustomPoint const& p)
+ *         { return p.longitude; }
+ *     };
+ * }
+ * ```
+ *
+ * To see this in action, please refer to the tests directory.
+ *
+ * \section install_sec Installation
+ *
+ * First clone the repository with the following command:
+ * ```bash
+ * $ git clone https://github.com/adl1995/boost-geometry-proposal.git
+ * ```
+ * Then, `cd` into the cloned repository by:
+ * ```bash
+ * $ cd boost-geometry-proposal
+ * $ cd geolib
+ * ```
+ * To compile the library, first create a build directory:
+ * ```bash
+ * $ mkdir build
+ * $ cd build
+ * ```
+ * The next step is to run CMake to configure the project:
+ * ```bash
+ * $ cmake ../
+ * ```
+ * Once CMake is configured, the library can be built by typing `make`. This will build the 'geolib_tests' component:
+ * ```bash
+ * $ make
+ * ```
+ * The tests can be run by typing:
+ * ```bash
+ * $ make tests
+ * ```
+ * To build the documentation using Doxygen, type:
+ * ```bash
+ * $ make docs
+ * ```
+ * Finally, the HTML documentation can be opened with Firefox by typing:
+ * ```bash
+ * $ firefox docs/html/index.html
+ * ```
+ */
+
 /**
  * Find the geographical distance using the Haversine formula,
  * which is given by the following equation:
