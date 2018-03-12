@@ -20,39 +20,52 @@ using namespace geolib;
 using namespace boost::geometry;
 using namespace boost::test_tools;
 
-
-// Define a custom point representation; to
-// be used for distance computation.
-struct GeoPointUser
+/**
+ * This user defined structure represents a 2-dimensional
+ * geographic / spherical point on the Earth's surface
+ * using degrees as units.
+ */
+struct GeoPoint
 {
-  GeoPointUser(double latitude, double longitude) :
-    latitude(latitude), longitude(longitude)
-    { /* Nothing to do. */ }
+  /**
+   * Construct the GeoPoint object with the given parameters.
+   *
+   * @param latitude  Geographic coordinate that specifies the
+   *     north-south position of a point on the Earth's surface.
+   * @param longitude  Geographic coordinate that specifies the
+   *     east-west position of a point on the Earth's surface.
+   */
+  GeoPoint(double latitude, double longitude) :
+    latitude(latitude),
+    longitude(longitude)
+  { /* Nothing to do. */ }
 
   double latitude, longitude;
 };
 
-// Specialize the generic functions getRadian and getDegree
-// for our GeoPointUser type. These functions are used for
-// distance computation.
+/**
+ * Specialize the generic functions getRadian and getDegree
+ * for our GeoPoint type. These functions are used for
+ * distance computation.
+ */
 namespace PointTrait
 {
     template <>
-    struct access<GeoPointUser, 0>
+    struct AccessPoint<GeoPoint, 0>
     {
-        static double getRadian(GeoPointUser const& p)
+        static double getRadian(GeoPoint const& p)
         { return p.latitude * M_PI / 180; }
 
-        static double getDegree(GeoPointUser const& p)
+        static double getDegree(GeoPoint const& p)
         { return p.latitude; }
     };
     template <>
-    struct access<GeoPointUser, 1>
+    struct AccessPoint<GeoPoint, 1>
     {
-        static double getRadian(GeoPointUser const& p)
+        static double getRadian(GeoPoint const& p)
         { return p.longitude * M_PI / 180; }
 
-        static double getDegree(GeoPointUser const& p)
+        static double getDegree(GeoPoint const& p)
         { return p.longitude; }
     };
 }
@@ -74,13 +87,13 @@ struct InitTests
       std::vector<double> geoData;
       while (iss >> dataField) { geoData.push_back(dataField); }
 
-      GeoPoint<double> point1(geoData[0], geoData[1]),
-               point2(geoData[3], geoData[4]);
+      GeoPoint point1user(geoData[0], geoData[1]),
+               point2user(geoData[3], geoData[4]);
 
-      GeoDistance<double> distanceLocal(point1, point2);
+      distanceTestData.push_back(geoData[6]);
 
-      distanceGlobalTest.push_back(
-          std::make_pair(distanceLocal, geoData[6]));
+      globalPoints.push_back(
+          std::make_pair(point1user, point2user));
     }
   }
 
@@ -88,9 +101,12 @@ struct InitTests
   std::string line;
   std::ifstream infile;
 
-  // The pair will hold the GeoDistance object and
-  // the resulting distance.
-  std::vector<std::pair<GeoDistance<double>, double>> distanceGlobalTest;
+  // This will hold the resulting distance.
+  std::vector<double> distanceTestData;
+
+  // This pair holds the user define point structure used for
+  // distance calculation.
+  std::vector<std::pair<GeoPoint, GeoPoint>> globalPoints;
 
   // These object are required for Boot Geometry tests.
   typedef model::point
@@ -102,92 +118,91 @@ struct InitTests
 BOOST_FIXTURE_TEST_SUITE(GeoDistanceTest, InitTests);
 
 /**
- * Test case for GeoDistance using
- * the Haversine formula.
+ * Test case for the Haversine formula.
  */
 BOOST_AUTO_TEST_CASE(HaverineTest)
 {
-  for (size_t i = 0; i < distanceGlobalTest.size(); ++i)
+  for (size_t i = 0; i < distanceTestData.size(); ++i)
   {
     // Convert the distance to meters.
-    double d = E_RADIUS_M * distanceGlobalTest[i].first.HaversineDistance();
+    double d = E_RADIUS_M * HaversineDistance(globalPoints[i].first, globalPoints[i].second);
 
-    BOOST_TEST(d == distanceGlobalTest[i].second, tolerance(1e-1));
+    BOOST_TEST(d == distanceTestData[i], tolerance(1e-1));
   }
 }
 
 /**
- * Test case for GeoDistance using
+ * Test case for the
  * Spherical Law of Cosines.
  */
 BOOST_AUTO_TEST_CASE(SphericalLawOfCosinesTest)
 {
-  for (size_t i = 0; i < distanceGlobalTest.size(); ++i)
+  for (size_t i = 0; i < distanceTestData.size(); ++i)
   {
     // Convert the distance to meters.
-    double d = E_RADIUS_M * distanceGlobalTest[i].first.SphericalLawOfCosines();
+    double d = E_RADIUS_M * SphericalLawOfCosines(globalPoints[i].first, globalPoints[i].second);
 
-    BOOST_TEST(d == distanceGlobalTest[i].second, tolerance(1e-1));
+    BOOST_TEST(d == distanceTestData[i], tolerance(1e-1));
   }
 }
 
 /**
- * Test case for GeoDistance using
+ * Test case for the
  * Equirectangular approximation.
  */
 BOOST_AUTO_TEST_CASE(EquirectangularApproximationTest)
 {
-  for (size_t i = 0; i < distanceGlobalTest.size(); ++i)
+  for (size_t i = 0; i < distanceTestData.size(); ++i)
   {
     // Convert the distance to meters.
-    double d = E_RADIUS_M * distanceGlobalTest[i].first.EquirectangularApproximation();
+    double d = E_RADIUS_M * EquirectangularApproximation(globalPoints[i].first, globalPoints[i].second);
 
-    BOOST_TEST(d == distanceGlobalTest[i].second, tolerance(0.55));
+    BOOST_TEST(d == distanceTestData[i], tolerance(0.55));
   }
 }
 
 /**
- * Test case for GeoDistance using
+ * Test case for the
  * Ellipsoidal approximation.
  */
 BOOST_AUTO_TEST_CASE(EllipsoidalApproximationTest)
 {
-  for (size_t i = 0; i < distanceGlobalTest.size(); ++i)
+  for (size_t i = 0; i < distanceTestData.size(); ++i)
   {
     // Convert the distance to meters.
-    double d = distanceGlobalTest[i].first.EllipsoidalApproximation() * 1000;
+    double d =  EllipsoidalApproximation(globalPoints[i].first, globalPoints[i].second) * 1000;
 
-    BOOST_TEST(d == distanceGlobalTest[i].second, tolerance(7.8));
+    BOOST_TEST(d == distanceTestData[i], tolerance(7.8));
   }
 }
 
 /**
- * Test case for GeoDistance using
- * tunnel distance.
+ * Test case for the
+ * Tunnel distance.
  */
 BOOST_AUTO_TEST_CASE(TunnelDistanceTest)
 {
-  for (size_t i = 0; i < distanceGlobalTest.size(); ++i)
+  for (size_t i = 0; i < distanceTestData.size(); ++i)
   {
     // Convert the distance to meters.
-    double d = E_RADIUS_M * distanceGlobalTest[i].first.TunnelDistance();
+    double d = E_RADIUS_M * TunnelDistance(globalPoints[i].first, globalPoints[i].second);
 
-    BOOST_TEST(d == distanceGlobalTest[i].second, tolerance(0.5));
+    BOOST_TEST(d == distanceTestData[i], tolerance(0.5));
   }
 }
 
 /**
- * Test case for GeoDistance using
+ * Test case for the
  * Vincentys formula.
  */
 BOOST_AUTO_TEST_CASE(VincentysFormulaTest)
 {
-  for (size_t i = 0; i < distanceGlobalTest.size(); ++i)
+  for (size_t i = 0; i < distanceTestData.size(); ++i)
   {
     // The distance is retuned in meters.
-    double d = distanceGlobalTest[i].first.VincentysFormula();
+    double d = VincentysFormula(globalPoints[i].first, globalPoints[i].second);
 
-    BOOST_TEST(d == distanceGlobalTest[i].second, tolerance(1e-9));
+    BOOST_TEST(d == distanceTestData[i], tolerance(1e-9));
   }
 }
 
@@ -223,7 +238,7 @@ BOOST_AUTO_TEST_CASE(BoostGeometryDefaultStrategyTest)
 }
 
 /**
- * Test case for GeoDistance using Boost Geometry
+ * Test case using Boost Geometry
  * Thomas strategy.
  */
 BOOST_AUTO_TEST_CASE(BoostGeometryThomasStrategyTest)
@@ -258,7 +273,7 @@ BOOST_AUTO_TEST_CASE(BoostGeometryThomasStrategyTest)
 }
 
 /**
- * Test case for GeoDistance using Boost Geometry
+ * Test case using Boost Geometry
  * Vincenty strategy.
  */
 BOOST_AUTO_TEST_CASE(BoostGeometryVincentyStrategyTest)
@@ -293,7 +308,7 @@ BOOST_AUTO_TEST_CASE(BoostGeometryVincentyStrategyTest)
 }
 
 /**
- * Test case for GeoDistance using Boost Geometry
+ * Test case using Boost Geometry
  * Andoyer strategy.
  */
 BOOST_AUTO_TEST_CASE(BoostGeometryAndoyerStrategyTest)
