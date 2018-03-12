@@ -50,31 +50,31 @@ struct GeoPoint
  */
 namespace PointTrait
 {
-    template <>
-    struct AccessPoint<GeoPoint, 0>
-    {
-        static double getRadian(GeoPoint const& p)
-        { return p.latitude * M_PI / 180; }
+  template <>
+  struct AccessPoint<GeoPoint, 0>
+  {
+    static double getRadian(GeoPoint const& p)
+    { return p.latitude * M_PI / 180; }
 
-        static double getDegree(GeoPoint const& p)
-        { return p.latitude; }
-    };
-    template <>
-    struct AccessPoint<GeoPoint, 1>
-    {
-        static double getRadian(GeoPoint const& p)
-        { return p.longitude * M_PI / 180; }
+    static double getDegree(GeoPoint const& p)
+    { return p.latitude; }
+  };
+  template <>
+  struct AccessPoint<GeoPoint, 1>
+  {
+    static double getRadian(GeoPoint const& p)
+    { return p.longitude * M_PI / 180; }
 
-        static double getDegree(GeoPoint const& p)
-        { return p.longitude; }
-    };
+    static double getDegree(GeoPoint const& p)
+    { return p.longitude; }
+  };
 }
 
 struct InitTests
 {
   // Read the test data in a std::vector.
   InitTests() :
-      infile("GeodTest.dat")
+    infile("GeodTest.dat")
   {
     // This will temporarily hold the data values.
     double dataField;
