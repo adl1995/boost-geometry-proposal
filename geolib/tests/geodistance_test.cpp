@@ -11,12 +11,15 @@
 #define BOOST_TEST_MODULE GeoDistanceTest
 
 #include <fstream>
+#include <numeric>
+#include <boost/chrono.hpp>
 #include <boost/geometry.hpp>
 #include "../src/geodistance.hpp"
 
 #include <boost/test/included/unit_test.hpp>
 
 using namespace geolib;
+using namespace boost::chrono;
 using namespace boost::geometry;
 using namespace boost::test_tools;
 
@@ -104,6 +107,9 @@ struct InitTests
   // This will hold the resulting distance.
   std::vector<double> distanceTestData;
 
+  // This will hold the execution time for each run.
+  std::vector<double> time;
+
   // This pair holds the user define point structure used for
   // distance calculation.
   std::vector<std::pair<GeoPoint, GeoPoint>> globalPoints;
@@ -113,6 +119,10 @@ struct InitTests
       <double, 2, cs::spherical_equatorial
       <degree>> spherical_point;
   typedef srs::spheroid<double> stype;
+
+  // Used for benchmarking the execution time.
+  high_resolution_clock::time_point start;
+  high_resolution_clock::time_point end;
 };
 
 BOOST_FIXTURE_TEST_SUITE(GeoDistanceTest, InitTests);
@@ -124,11 +134,19 @@ BOOST_AUTO_TEST_CASE(HaverineTest)
 {
   for (size_t i = 0; i < distanceTestData.size(); ++i)
   {
+    start = high_resolution_clock::now();
+
     // Convert the distance to meters.
     double d = E_RADIUS_M * HaversineDistance(globalPoints[i].first, globalPoints[i].second);
 
+    end = high_resolution_clock::now();
+    time.push_back(duration_cast<duration<double>>(end - start).count());
+
     BOOST_TEST(d == distanceTestData[i], tolerance(1e-1));
   }
+
+  double avgExecTime = std::accumulate(time.cbegin(), time.cend(), 0.0);
+  std::cout << "HaverineTest: average execution time (seconds): " << avgExecTime << std::endl;
 }
 
 /**
@@ -139,11 +157,19 @@ BOOST_AUTO_TEST_CASE(SphericalLawOfCosinesTest)
 {
   for (size_t i = 0; i < distanceTestData.size(); ++i)
   {
+    start = high_resolution_clock::now();
+
     // Convert the distance to meters.
     double d = E_RADIUS_M * SphericalLawOfCosines(globalPoints[i].first, globalPoints[i].second);
 
+    end = high_resolution_clock::now();
+    time.push_back(duration_cast<duration<double>>(end - start).count());
+
     BOOST_TEST(d == distanceTestData[i], tolerance(1e-1));
   }
+
+  double avgExecTime = std::accumulate(time.cbegin(), time.cend(), 0.0);
+  std::cout << "SphericalLawOfCosinesTest: average execution time (seconds): " << avgExecTime << std::endl;
 }
 
 /**
@@ -154,11 +180,19 @@ BOOST_AUTO_TEST_CASE(EquirectangularApproximationTest)
 {
   for (size_t i = 0; i < distanceTestData.size(); ++i)
   {
+    start = high_resolution_clock::now();
+
     // Convert the distance to meters.
     double d = E_RADIUS_M * EquirectangularApproximation(globalPoints[i].first, globalPoints[i].second);
 
+    end = high_resolution_clock::now();
+    time.push_back(duration_cast<duration<double>>(end - start).count());
+
     BOOST_TEST(d == distanceTestData[i], tolerance(0.55));
   }
+
+  double avgExecTime = std::accumulate(time.cbegin(), time.cend(), 0.0);
+  std::cout << "EquirectangularApproximationTest: average execution time (seconds): " << avgExecTime << std::endl;
 }
 
 /**
@@ -169,11 +203,19 @@ BOOST_AUTO_TEST_CASE(EllipsoidalApproximationTest)
 {
   for (size_t i = 0; i < distanceTestData.size(); ++i)
   {
+    start = high_resolution_clock::now();
+
     // Convert the distance to meters.
     double d =  EllipsoidalApproximation(globalPoints[i].first, globalPoints[i].second) * 1000;
 
+    end = high_resolution_clock::now();
+    time.push_back(duration_cast<duration<double>>(end - start).count());
+
     BOOST_TEST(d == distanceTestData[i], tolerance(7.8));
   }
+
+  double avgExecTime = std::accumulate(time.cbegin(), time.cend(), 0.0);
+  std::cout << "EllipsoidalApproximationTest: average execution time (seconds): " << avgExecTime << std::endl;
 }
 
 /**
@@ -184,11 +226,19 @@ BOOST_AUTO_TEST_CASE(TunnelDistanceTest)
 {
   for (size_t i = 0; i < distanceTestData.size(); ++i)
   {
+    start = high_resolution_clock::now();
+
     // Convert the distance to meters.
     double d = E_RADIUS_M * TunnelDistance(globalPoints[i].first, globalPoints[i].second);
 
+    end = high_resolution_clock::now();
+    time.push_back(duration_cast<duration<double>>(end - start).count());
+
     BOOST_TEST(d == distanceTestData[i], tolerance(0.5));
   }
+
+  double avgExecTime = std::accumulate(time.cbegin(), time.cend(), 0.0);
+  std::cout << "TunnelDistanceTest: average execution time (seconds): " << avgExecTime << std::endl;
 }
 
 /**
@@ -199,11 +249,19 @@ BOOST_AUTO_TEST_CASE(VincentysFormulaTest)
 {
   for (size_t i = 0; i < distanceTestData.size(); ++i)
   {
+    start = high_resolution_clock::now();
+
     // The distance is retuned in meters.
     double d = VincentysFormula(globalPoints[i].first, globalPoints[i].second);
 
+    end = high_resolution_clock::now();
+    time.push_back(duration_cast<duration<double>>(end - start).count());
+
     BOOST_TEST(d == distanceTestData[i], tolerance(1e-9));
   }
+
+  double avgExecTime = std::accumulate(time.cbegin(), time.cend(), 0.0);
+  std::cout << "VincentysFormulaTest: average execution time (seconds): " << avgExecTime << std::endl;
 }
 
 /**
@@ -230,11 +288,19 @@ BOOST_AUTO_TEST_CASE(BoostGeometryDefaultStrategyTest)
     spherical_point point1(geoData[1], geoData[0]),
                     point2(geoData[4], geoData[3]);
 
+    start = high_resolution_clock::now();
+
     // Convert the distance to meters.
     double d = E_RADIUS_M * distance(point1, point2);
 
+    end = high_resolution_clock::now();
+    time.push_back(duration_cast<duration<double>>(end - start).count());
+
     BOOST_TEST(d == geoData[6], tolerance(1e-2));
   }
+
+  double avgExecTime = std::accumulate(time.cbegin(), time.cend(), 0.0);
+  std::cout << "BoostGeometryDefaultStrategyTest: average execution time (seconds): " << avgExecTime << std::endl;
 }
 
 /**
@@ -265,11 +331,19 @@ BOOST_AUTO_TEST_CASE(BoostGeometryThomasStrategyTest)
     spherical_point point1(geoData[1], geoData[0]),
                     point2(geoData[4], geoData[3]);
 
+    start = high_resolution_clock::now();
+
     // The distance is returned in meters.
     double d = distance(point1, point2, thomas_type());
 
+    end = high_resolution_clock::now();
+    time.push_back(duration_cast<duration<double>>(end - start).count());
+
     BOOST_TEST(d == geoData[6], tolerance(1e-4));
   }
+
+  double avgExecTime = std::accumulate(time.cbegin(), time.cend(), 0.0);
+  std::cout << "BoostGeometryThomasStrategyTest: average execution time (seconds): " << avgExecTime << std::endl;
 }
 
 /**
@@ -300,11 +374,19 @@ BOOST_AUTO_TEST_CASE(BoostGeometryVincentyStrategyTest)
     spherical_point point1(geoData[1], geoData[0]),
                     point2(geoData[4], geoData[3]);
 
+    start = high_resolution_clock::now();
+
     // The distance is returned in meters.
     double d = distance(point1, point2, vincenty_type());
 
+    end = high_resolution_clock::now();
+    time.push_back(duration_cast<duration<double>>(end - start).count());
+
     BOOST_TEST(d == geoData[6], tolerance(1e-5));
   }
+
+  double avgExecTime = std::accumulate(time.cbegin(), time.cend(), 0.0);
+  std::cout << "BoostGeometryVincentyStrategyTest: average execution time (seconds): " << avgExecTime << std::endl;
 }
 
 /**
@@ -335,11 +417,19 @@ BOOST_AUTO_TEST_CASE(BoostGeometryAndoyerStrategyTest)
     spherical_point point1(geoData[1], geoData[0]),
                     point2(geoData[4], geoData[3]);
 
+    start = high_resolution_clock::now();
+
     // The distance is returned in meters.
     double d = distance(point1, point2, andoyer_type());
 
+    end = high_resolution_clock::now();
+    time.push_back(duration_cast<duration<double>>(end - start).count());
+
     BOOST_TEST(d == geoData[6], tolerance(1e-4));
   }
+
+  double avgExecTime = std::accumulate(time.cbegin(), time.cend(), 0.0);
+  std::cout << "BoostGeometryAndoyerStrategyTest: average execution time (seconds): " << avgExecTime << std::endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END();
