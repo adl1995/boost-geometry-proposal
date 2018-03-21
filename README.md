@@ -89,3 +89,11 @@ Finally, the HTML documentation can be opened with Firefox by typing:
 ```bash
 $ firefox docs/html/index.html
 ```
+
+### Results
+
+For benchmarking, we calculate the average execution time over all the distance algorithms. The dataset used is: [Test set for geodesics](https://zenodo.org/record/32156#.WrIxxeaYPrf), by Karney, Charles. For the purpose of this demonstration, only 15000 entries are used for testing.
+
+The bar chart below tries to visually compare the average execution time for each distance formula. This was calculated using the g++ compiler (version 7.2.0 on Ubuntu 14.04) with the O1 optimization level:
+
+![execution-times](results/execution-times.png)
