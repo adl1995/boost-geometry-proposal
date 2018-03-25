@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE(BoostGeometryDefaultStrategyTest)
     std::vector<double> geoData;
     while (iss >> dataField) { geoData.push_back(dataField); }
 
-    // Boost Geometry takes arguments in (latitude, longitude) form.
+    // Boost Geometry takes arguments in (longitude, latitude) form.
     spherical_point point1(geoData[1], geoData[0]),
                     point2(geoData[4], geoData[3]);
 
@@ -327,7 +327,7 @@ BOOST_AUTO_TEST_CASE(BoostGeometryThomasStrategyTest)
     std::vector<double> geoData;
     while (iss >> dataField) { geoData.push_back(dataField); }
 
-    // Boost Geometry takes arguments in (latitude, longitude) form.
+    // Boost Geometry takes arguments in (longitude, latitude) form.
     spherical_point point1(geoData[1], geoData[0]),
                     point2(geoData[4], geoData[3]);
 
@@ -370,7 +370,7 @@ BOOST_AUTO_TEST_CASE(BoostGeometryVincentyStrategyTest)
     std::vector<double> geoData;
     while (iss >> dataField) { geoData.push_back(dataField); }
 
-    // Boost Geometry takes arguments in (latitude, longitude) form.
+    // Boost Geometry takes arguments in (longitude, latitude) form.
     spherical_point point1(geoData[1], geoData[0]),
                     point2(geoData[4], geoData[3]);
 
@@ -413,7 +413,7 @@ BOOST_AUTO_TEST_CASE(BoostGeometryAndoyerStrategyTest)
     std::vector<double> geoData;
     while (iss >> dataField) { geoData.push_back(dataField); }
 
-    // Boost Geometry takes arguments in (latitude, longitude) form.
+    // Boost Geometry takes arguments in (longitude, latitude) form.
     spherical_point point1(geoData[1], geoData[0]),
                     point2(geoData[4], geoData[3]);
 
