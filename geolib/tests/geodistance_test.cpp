@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE(HaverineTest)
     end = high_resolution_clock::now();
     time.push_back(duration_cast<duration<double>>(end - start).count());
 
-    BOOST_TEST(d == distanceTestData[i], tolerance(1e-1));
+    BOOST_TEST(d == distanceTestData[i], tolerance(1e-2));
   }
 
   double avgExecTime = std::accumulate(time.cbegin(), time.cend(), 0.0);
@@ -430,6 +430,29 @@ BOOST_AUTO_TEST_CASE(BoostGeometryAndoyerStrategyTest)
 
   double avgExecTime = std::accumulate(time.cbegin(), time.cend(), 0.0);
   std::cout << "BoostGeometryAndoyerStrategyTest: average execution time (seconds): " << avgExecTime << std::endl;
+}
+
+/**
+ * Test case using Boost Geometry
+ * direct Vincenty strategy.
+ */
+BOOST_AUTO_TEST_CASE(BoostGeometryDirectVincentyStrategyTest)
+{
+  // Define the strategies for direct and inverse geodesic.
+  typedef formula::vincenty_direct<double, true, true, true, true> vincenty_direct_type;
+
+  // Result object for direct geodesic.
+  formula::result_direct<double> result;
+
+  // WGS-84 spheroid.
+  srs::spheroid<double> spheroid(6378137.0, 6356752.3142451793);
+
+  result = vincenty_direct_type::apply(-73.787500, 2.179167, 20001571.135, 6.80724316, spheroid);
+
+  // This is the case for nearly antipodal points,
+  // which Boost Geometry does not correctly handle.
+  BOOST_TEST(result.lon2 == 106.139064, tolerance(1e-5));
+  BOOST_TEST(result.lat2 == -2.162200, tolerance(1e-5));
 }
 
 BOOST_AUTO_TEST_SUITE_END();
