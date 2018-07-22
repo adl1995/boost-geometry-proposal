@@ -1,6 +1,3 @@
-# boost-geometry-proposal
-This repository contains the programming competency task for the Boost organization.
-
 ## GeoLib
 
 ### Introduction
